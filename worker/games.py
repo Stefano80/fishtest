@@ -94,7 +94,7 @@ def verify_signature(engine, signature, remote, payload, concurrency):
 
 def setup(item, testing_dir):
   """Download item from fishtest to testing_dir"""
-  tree = requests.get(github_api(FISHCOOKING_URL) + '/git/trees/openingBooks', timeout=HTTP_TIMEOUT).json()
+  tree = requests.get(github_api(FISHCOOKING_URL) + '/git/trees/setup', timeout=HTTP_TIMEOUT).json()
   for blob in tree['tree']:
     if blob['path'] == item:
       print 'Downloading %s ...' % (item)
