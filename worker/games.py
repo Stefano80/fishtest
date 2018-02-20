@@ -40,7 +40,7 @@ def is_64bit():
 
 HTTP_TIMEOUT = 5.0
 
-FISHCOOKING_URL = 'https://github.com/glinscott/fishtest'
+FISHTEST_URL = 'https://github.com/glinscott/fishtest'
 ARCH = 'ARCH=x86-64-modern' if is_64bit() else 'ARCH=x86-32'
 EXE_SUFFIX = ''
 MAKE_CMD = 'make profile-build COMP=gcc ' + ARCH
@@ -94,7 +94,7 @@ def verify_signature(engine, signature, remote, payload, concurrency):
 
 def setup(item, testing_dir):
   """Download item from fishtest to testing_dir"""
-  tree = requests.get(github_api(FISHCOOKING_URL) + '/git/trees/setup', timeout=HTTP_TIMEOUT).json()
+  tree = requests.get(github_api(FISHTEST_URL) + '/git/trees/setup', timeout=HTTP_TIMEOUT).json()
   for blob in tree['tree']:
     if blob['path'] == item:
       print 'Downloading %s ...' % (item)
@@ -339,7 +339,7 @@ def run_games(worker_info, password, remote, run, task_id):
   threads = int(run['args']['threads'])
   spsa_tuning = 'spsa' in run['args']
   binaries_url = run.get('binaries_url', '')
-  repo_url = run['args'].get('tests_repo', FISHCOOKING_URL)
+  repo_url = run['args'].get('tests_repo', FISHTEST_URL)
   games_concurrency = int(worker_info['concurrency']) / threads
 
   # Format options according to cutechess syntax
