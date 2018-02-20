@@ -40,7 +40,7 @@ def is_64bit():
 
 HTTP_TIMEOUT = 5.0
 
-FISHCOOKING_URL = 'https://github.com/mcostalba/FishCooking'
+FISHCOOKING_URL = 'https://github.com/glinscott/fishtest'
 ARCH = 'ARCH=x86-64-modern' if is_64bit() else 'ARCH=x86-32'
 EXE_SUFFIX = ''
 MAKE_CMD = 'make profile-build COMP=gcc ' + ARCH
@@ -93,8 +93,8 @@ def verify_signature(engine, signature, remote, payload, concurrency):
   return bench_nps
 
 def setup(item, testing_dir):
-  """Download item from FishCooking to testing_dir"""
-  tree = requests.get(github_api(FISHCOOKING_URL) + '/git/trees/setup', timeout=HTTP_TIMEOUT).json()
+  """Download item from fishtest to testing_dir"""
+  tree = requests.get(github_api(FISHCOOKING_URL) + '/git/trees/openingBooks', timeout=HTTP_TIMEOUT).json()
   for blob in tree['tree']:
     if blob['path'] == item:
       print 'Downloading %s ...' % (item)
