@@ -110,11 +110,11 @@ def setup_engine(destination, worker_dir, sha, repo_url, concurrency):
   if os.path.exists(destination): os.remove(destination)
   """Download and build sources in a temporary directory then move exe to destination"""
   tmp_dir = tempfile.mkdtemp()
-  os.chdir(tmp_dir)
   
   failed_build = 0;
   while failed_build < 3:
     try:
+      os.chdir(tmp_dir)
       with open('sf.gz', 'wb+') as f:
         f.write(requests.get(github_api(repo_url) + '/zipball/' + sha, timeout=HTTP_TIMEOUT).content)
       zip_file = ZipFile('sf.gz')
