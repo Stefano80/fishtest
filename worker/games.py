@@ -110,7 +110,8 @@ def setup_engine(destination, worker_dir, sha, repo_url, concurrency):
   if os.path.exists(destination): os.remove(destination)
   """Download and build sources in a temporary directory then move exe to destination"""
   tmp_dir = tempfile.mkdtemp()
-
+  successful = False
+  
   try:
     os.chdir(tmp_dir)
     with open('sf.gz', 'wb+') as f:
@@ -133,12 +134,14 @@ def setup_engine(destination, worker_dir, sha, repo_url, concurrency):
       subprocess.check_call(MAKE_CMD + ' -j %s' % (concurrency), shell=True)
 
     shutil.move('stockfish'+ EXE_SUFFIX, destination)
-  except:
-    pass
-
-  os.chdir(worker_dir)
-  shutil.rmtree(tmp_dir)
-
+    successful = True
+  finally:
+    os.chdir(worker_dir)
+    shutil.rmtree(tmp_dir)
+    
+  if successful != True:
+    raise Exception('Failed to setup engine for %s' % (sha))
+    
 def kill_process(p):
   if IS_WINDOWS:
     # Kill doesn't kill subprocesses on Windows
