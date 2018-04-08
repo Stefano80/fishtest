@@ -110,35 +110,31 @@ def setup_engine(destination, worker_dir, sha, repo_url, concurrency):
   if os.path.exists(destination): os.remove(destination)
   """Download and build sources in a temporary directory then move exe to destination"""
   tmp_dir = tempfile.mkdtemp()
-  
-  failed_build = 0;
-  while failed_build < 3:
-    try:
-      os.chdir(tmp_dir)
-      with open('sf.gz', 'wb+') as f:
-        f.write(requests.get(github_api(repo_url) + '/zipball/' + sha, timeout=HTTP_TIMEOUT).content)
-      zip_file = ZipFile('sf.gz')
-      zip_file.extractall()
-      zip_file.close()
 
-      for name in zip_file.namelist():
-        if name.endswith('/src/'):
-          src_dir = name
-      os.chdir(src_dir)
+  try:
+    os.chdir(tmp_dir)
+    with open('sf.gz', 'wb+') as f:
+      f.write(requests.get(github_api(repo_url) + '/zipball/' + sha, timeout=HTTP_TIMEOUT).content)
+    zip_file = ZipFile('sf.gz')
+    zip_file.extractall()
+    zip_file.close()
 
-      custom_make = os.path.join(worker_dir, 'custom_make.txt')
-      if os.path.exists(custom_make):
-        with open(custom_make, 'r') as m:
-          make_cmd = m.read().strip()
-        subprocess.check_call(make_cmd, shell=True)
-      else:
-        subprocess.check_call(MAKE_CMD + ' -j %s' % (concurrency), shell=True)
+    for name in zip_file.namelist():
+      if name.endswith('/src/'):
+        src_dir = name
+    os.chdir(src_dir)
 
-      shutil.move('stockfish'+ EXE_SUFFIX, destination)
-      break
-    except:
-      failed_build += 1
-      time.sleep(10)
+    custom_make = os.path.join(worker_dir, 'custom_make.txt')
+    if os.path.exists(custom_make):
+      with open(custom_make, 'r') as m:
+        make_cmd = m.read().strip()
+      subprocess.check_call(make_cmd, shell=True)
+    else:
+      subprocess.check_call(MAKE_CMD + ' -j %s' % (concurrency), shell=True)
+
+    shutil.move('stockfish'+ EXE_SUFFIX, destination)
+  except:
+    pass
 
   os.chdir(worker_dir)
   shutil.rmtree(tmp_dir)
